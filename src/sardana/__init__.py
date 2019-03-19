@@ -32,8 +32,10 @@ from . import requirements as __requirements
 __requirements.check_requirements()
 
 
-class Release:
+class _Release:
     pass
+
+Release = _Release()
 
 Release.__dict__.update(__release.__dict__)
 Release.__doc__ = __release.__doc__
