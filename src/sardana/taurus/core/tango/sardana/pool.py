@@ -127,9 +127,14 @@ class BaseElement(object):
             return CodecFactory.encode(('json'), self.serialize())
         return self._str_tuple[:n]
 
-    def __cmp__(self, o):
-        return cmp(self.getPoolData()['full_name'],
-                   o.getPoolData()['full_name'])
+    def __lt__(self, o):
+        return self.getPoolData()['full_name'] < o.getPoolData()['full_name']
+
+    def __gt__(self, o):
+        return self.getPoolData()['full_name'] > o.getPoolData()['full_name']
+    
+    def __eq__(self, o):
+        return self.getPoolData()['full_name'] == o.getPoolData()['full_name']
 
     def getName(self):
         return self.getPoolData()['name']
@@ -180,14 +185,14 @@ class ControllerClass(BaseElement):
     def getOrganization(self):
         return self.organization
 
-    def __cmp__(self, o):
-        t = cmp(self.getType(), o.getType())
-        if t != 0:
-            return t
-        t = cmp(self.getGender(), o.getGender())
-        if t != 0:
-            return t
-        return cmp(self.getClassName(), o.getClassName())
+    def __lt__(self,o):
+        return (self.getType(),self.getGender(),self.getClassName()) <  (o.getType(),o.getGender(),o.getClassName())
+
+    def __gt__(self,o):
+        return (self.getType(),self.getGender(),self.getClassName()) >  (o.getType(),o.getGender(),o.getClassName())
+
+    def __eq__(self,o):
+        return (self.getType(),self.getGender(),self.getClassName()) ==  (o.getType(),o.getGender(),o.getClassName())
 
 
 class ControllerLibrary(BaseElement):
@@ -658,8 +663,15 @@ class Controller(PoolElement):
             return None
         return max(used_axes)
 
-    def __cmp__(self, o):
-        return cmp(self.getName(), o.getName())
+    def __lt__(self,o):
+        return self.getName() < o.getName()
+
+    def __gt__(self,o):
+        return self.getName() > o.getName()
+
+    def __eq__(self,o):
+        return self.getName() == o.getName()
+
 
 
 class ComChannel(PoolElement):

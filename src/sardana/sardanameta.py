@@ -131,10 +131,17 @@ class SardanaLibrary(SardanaBaseObject):
         kwargs['full_name'] = file_path or name
         SardanaBaseObject.__init__(self, **kwargs)
 
-    def __cmp__(self, o):
-        a = self.full_name
-        b = o.full_name
-        return (a>b)-(a<b)#cmp(self.full_name, o.full_name)
+
+
+    def __lt__(self,o):
+        return self.full_name < o.full_name
+
+    def __eq__(self,o):
+        return self.full_name == o.full_name
+
+    def __gt__(self,o):
+        return self.full_name > o.full_name
+
 
     def __str__(self):
         return self.name

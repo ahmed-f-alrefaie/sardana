@@ -185,6 +185,15 @@ class SardanaBaseObject(EventGenerator, EventReceiver, Logger):
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, self._name)
 
+    def __lt__(self, elem):
+        return self.name < elem.name
+
+    def __gt__(self, elem):
+        return self.name > elem.name
+
+    def __eq__(self, elem):
+        return self.name == elem.name
+
     manager = property(get_manager,
                        doc="reference to the :class:`sardana.Manager`")
     name = property(get_name, set_name, doc="object name")
