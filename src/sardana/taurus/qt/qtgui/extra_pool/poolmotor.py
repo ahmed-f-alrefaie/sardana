@@ -94,7 +94,7 @@ class PoolMotorClient():
             # PENDING.
             self.has_limits = hasattr(self.motor_dev, 'Limit_Switches')
             self.has_encoder = hasattr(self.motor_dev, 'Encoder')
-        except Exception, e:
+        except Exception as e:
             taurus.warning('Exception Creating Motor Device %s', str(e))
 
     def moveMotor(self, pos):
@@ -668,14 +668,14 @@ class PoolMotorSlim(TaurusWidget, PoolMotorClient):
         TaurusWidget.showEvent(self, event)
         try:
             self.motor_dev.getAttribute('Position').enablePolling(force=True)
-        except AttributeError, e:
+        except AttributeError as e:
             self.debug('Error in showEvent: %s', repr(e))
 
     def hideEvent(self, event):
         TaurusWidget.hideEvent(self, event)
         try:
             self.motor_dev.getAttribute('Position').disablePolling()
-        except AttributeError, e:
+        except AttributeError as e:
             self.debug('Error in hideEvent: %s', repr(e))
 
     #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
@@ -748,7 +748,7 @@ class PoolMotorSlim(TaurusWidget, PoolMotorClient):
                 limits_visible = True
             self.ui.btnMin.setVisible(limits_visible)
             self.ui.btnMax.setVisible(limits_visible)
-        except Exception, e:
+        except Exception as e:
             self.ui.motorGroupBox.setEnabled(False)
             self.info('Error setting model "%s". Reason: %s' %
                       (model, repr(e)))
@@ -859,8 +859,7 @@ class PoolMotorTVLabelWidget(TaurusWidget):
 
         # I don't like this approach, there should be something like
         # self.lbl_alias.addAction(...)
-        self.lbl_alias.contextMenuEvent = lambda(
-            event): self.contextMenuEvent(event)
+        self.lbl_alias.contextMenuEvent = lambda event: self.contextMenuEvent(event)
 
         # I' don't like this approach, there should be something like
         # self.lbl_alias.addToolTipCallback(self.calculate_extra_tooltip)
@@ -1523,7 +1522,7 @@ class PoolMotorTV(TaurusValue):
             self.motor_dev.getAttribute('Position').enablePolling(force=True)
 
             self.setExpertView(self._expertView)
-        except Exception, e:
+        except Exception as e:
             self.warning("Exception caught while setting model: %s", repr(e))
             self.motor_dev = None
             return

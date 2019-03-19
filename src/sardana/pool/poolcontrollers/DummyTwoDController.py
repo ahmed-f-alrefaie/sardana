@@ -164,7 +164,7 @@ class DummyTwoDController(TwoDController):
 
     def _finish(self, elapsed_time, axis=None):
         if axis is None:
-            for axis, channel in self.counting_channels.items():
+            for axis, channel in list(self.counting_channels.items()):
                 channel.is_counting = False
                 self._updateChannelValue(axis, elapsed_time)
         else:
@@ -189,7 +189,7 @@ class DummyTwoDController(TwoDController):
         if self.counting_channels:
             now = time.time()
             elapsed_time = now - self.start_time
-            for axis, channel in self.read_channels.items():
+            for axis, channel in list(self.read_channels.items()):
                 self._updateChannelState(axis, elapsed_time)
                 if channel.is_counting:
                     self._updateChannelValue(axis, elapsed_time)

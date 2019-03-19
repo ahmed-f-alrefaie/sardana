@@ -172,7 +172,7 @@ class DummyCounterTimerController(CounterTimerController):
 
     def _finish(self, elapsed_time, ind=None):
         if ind is None:
-            for ind, channel in self.counting_channels.items():
+            for ind, channel in list(self.counting_channels.items()):
                 channel.is_counting = False
                 self._updateChannelValue(ind, elapsed_time)
         else:
@@ -197,7 +197,7 @@ class DummyCounterTimerController(CounterTimerController):
         if self.counting_channels:
             now = time.time()
             elapsed_time = now - self.start_time
-            for ind, channel in self.read_channels.items():
+            for ind, channel in list(self.read_channels.items()):
                 self._updateChannelState(ind, elapsed_time)
                 if channel.is_counting:
                     self._updateChannelValue(ind, elapsed_time)

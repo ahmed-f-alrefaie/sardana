@@ -76,11 +76,11 @@ try:
 except:
     try:
         import pexpect23 as pexpect
-        print "[WARNING]: pexpect module not found. Using local pexpect 2.3"
-    except Exception, e:
-        print e
-        print "The Sardana requires pexpect python module which was not found."
-        print "This module can be found at http://www.noah.org/wiki/Pexpect"
+        print("[WARNING]: pexpect module not found. Using local pexpect 2.3")
+    except Exception as e:
+        print(e)
+        print("The Sardana requires pexpect python module which was not found.")
+        print("This module can be found at http://www.noah.org/wiki/Pexpect")
         sys.exit(2)
 
 
@@ -148,7 +148,7 @@ class PEProcess(Process):
             idx = self._process.expect([Process.ReadyMsg, Process.AlreadyRunning,
                                         pexpect.EOF, pexpect.TIMEOUT],
                                        timeout=self.getMaxStartupTime())
-        except Exception, e:
+        except Exception as e:
             self.on("[FAILED]")
             raise e
 
@@ -204,7 +204,7 @@ class PEProcess(Process):
                 res = self.terminate()
                 idx = self._process.expect(['Exiting', 'Exited', pexpect.EOF, pexpect.TIMEOUT],
                                            timeout=max_shutdown_time)
-            except Exception, e:
+            except Exception as e:
                 self.on("[FAILED]")
                 raise e
 
@@ -224,7 +224,7 @@ class PEProcess(Process):
             try:
                 idx = self._process.expect(['Exited', pexpect.EOF, pexpect.TIMEOUT],
                                            timeout=5)
-            except Exception, e:
+            except Exception as e:
                 self.on("[FAILED]")
                 raise e
 
@@ -240,7 +240,7 @@ class PEProcess(Process):
             try:
                 idx = self._process.expect([pexpect.EOF, pexpect.TIMEOUT],
                                            timeout=5)
-            except Exception, e:
+            except Exception as e:
                 self.on("[FAILED]")
                 raise e
 
@@ -253,7 +253,7 @@ class PEProcess(Process):
                 self.o(" (shutdown time exceeded). Forcing... ")
                 self.kill()
 
-        except KeyboardInterrupt, ki:
+        except KeyboardInterrupt as ki:
             self.o("(Ctrl-C during stop). Forcing... ")
             self.kill()
 
@@ -315,7 +315,7 @@ class PESimuMotorProcess(PEPythonDeviceServerProcess):
             f, path, desc = imp.find_module('SimuMotor')
             if f:
                 f.close()
-        except exceptions.ImportError, e:
+        except exceptions.ImportError as e:
             msg = "Could not find %s executable.\n" \
                   "Make sure PYTHONPATH points to the directory(ies) where " \
                   "SimuMotorCtrl.py and SimuMotor.py files are installed" % name
@@ -336,7 +336,7 @@ class PESimuCounterTimerProcess(PEPythonDeviceServerProcess):
             f, fname, desc = imp.find_module('SimuCoTiCtrl')
             if f:
                 f.close()
-        except exceptions.ImportError, e:
+        except exceptions.ImportError as e:
             msg = "Could not find %s executable.\n" \
                   "Make sure PYTHONPATH points to the directory(ies) where " \
                   "SimuCoTiCtrl.py file is installed" % name
@@ -357,7 +357,7 @@ class PEPySignalSimulatorProcess(PEPythonDeviceServerProcess):
             f, fname, desc = imp.find_module('PySignalSimulator')
             if f:
                 f.close()
-        except exceptions.ImportError, e:
+        except exceptions.ImportError as e:
             msg = "Could not find %s executable.\n" \
                   "Make sure PYTHONPATH points to the directory where " \
                   "PySignalSimulator.py is installed" % name
@@ -449,9 +449,9 @@ class TangoServer:
         server_host_ip = socket.gethostbyname_ex(server_host)[2][0]
         pytango_host_ip = socket.gethostbyname_ex(pytango_host)[2][0]
         if (server_host_ip != pytango_host_ip) or (server_port != pytango_port):
-            print '\t!!! WARNING !!! %s TANGO_HOST is not the PyTango default. You may erase the WRONG sardana definition.' % self._complete_name
-            print '\tServer: %s  PyTango: %s' % (server_tango_host, pytango_tango_host)
-            ans = raw_input('\tDo you _really_ want to continue? [y|N] ')
+            print('\t!!! WARNING !!! %s TANGO_HOST is not the PyTango default. You may erase the WRONG sardana definition.' % self._complete_name)
+            print('\tServer: %s  PyTango: %s' % (server_tango_host, pytango_tango_host))
+            ans = input('\tDo you _really_ want to continue? [y|N] ')
             if ans.lower() not in ['y', 'yes']:
                 raise Exception(
                     'User cancelled the creation of %s server' % self._complete_name)
@@ -470,7 +470,7 @@ class TangoServer:
             cmd = 'TANGO_HOST=%s jive-save-config %s %s &>/dev/null' % (
                 server_tango_host, self._complete_name, config_file_name)
             os.system(cmd)
-            print 'There is a backup of the deleted server config in: %s' % config_file_name
+            print('There is a backup of the deleted server config in: %s' % config_file_name)
         except:
             pass
         #######################################################################
@@ -690,9 +690,9 @@ class DevicePoolServer(TangoServer):
                     v = self._item_node_to_value(tango_attr, v_node)
                     try:
                         dev.write_attribute(name, v)
-                    except Exception, ex:
-                        print 'SOME PROBLEMS SETTING ATTRIBUTE VALUE FOR DEVICE', dev_name, 'ATTRIBUTE', tango_attr.name, 'VALUE', str(v)
-                        print 'EXCEPTION:', ex
+                    except Exception as ex:
+                        print('SOME PROBLEMS SETTING ATTRIBUTE VALUE FOR DEVICE', dev_name, 'ATTRIBUTE', tango_attr.name, 'VALUE', str(v))
+                        print('EXCEPTION:', ex)
 
                 c_node = attr.find("Configuration")
                 if not c_node is None:
@@ -748,14 +748,14 @@ class DevicePoolServer(TangoServer):
                                 period = int(p_node.get("period") or 0)
                                 dev.poll_attribute(name, period)
                             except:
-                                print dev_name, tango_attr.name
+                                print(dev_name, tango_attr.name)
 
                     try:
                         dev.set_attribute_config(attr_info)
-                    except Exception, e:
-                        print 'COULD NOT SET THE FOLLOWING CONFIG FOR DEVICE', dev_name, 'ATTR', tango_attr.name
-                        print 'ATTRIBUTE INFO:', attr_info
-                        print 'EXCEPTION:', e
+                    except Exception as e:
+                        print('COULD NOT SET THE FOLLOWING CONFIG FOR DEVICE', dev_name, 'ATTR', tango_attr.name)
+                        print('ATTRIBUTE INFO:', attr_info)
+                        print('EXCEPTION:', e)
 
         intrument_node = node.find("InstrumentRef")
         if not intrument_node is None:
@@ -764,9 +764,9 @@ class DevicePoolServer(TangoServer):
                 try:
                     value = value.strip()
                     dev.write_attribute('Instrument', value)
-                except Exception, ex:
-                    print 'SOME PROBLEMS SETTING INSTRUMENT VALUE FOR DEVICE', dev_name, 'VALUE', value
-                    print 'EXCEPTION:', ex
+                except Exception as ex:
+                    print('SOME PROBLEMS SETTING INSTRUMENT VALUE FOR DEVICE', dev_name, 'VALUE', value)
+                    print('EXCEPTION:', ex)
 
     def loadPool(self):
         start_load_time = datetime.datetime.now()
@@ -842,7 +842,7 @@ class DevicePoolServer(TangoServer):
                         pars.append(p.get("name"))
                         pars.append(p.text or '\n'.join(
                             [i.text for i in p.findall("Item")]))
-                    pars = map(str.strip, pars)
+                    pars = list(map(str.strip, pars))
                     pool_dp.command_inout("CreateController", pars)
                     # to flush any output generated by the pool
                     self.run(step=True)
@@ -876,7 +876,7 @@ class DevicePoolServer(TangoServer):
                         pars = ["Motor", name, axis, aliasName]
                         if deviceName.count('/') == 2:
                             pars.append(deviceName)
-                        pars = map(str.strip, pars)
+                        pars = list(map(str.strip, pars))
                         pool_dp.command_inout("CreateElement", pars)
 
                         self.handle_attributes(aliasName, e)
@@ -914,7 +914,7 @@ class DevicePoolServer(TangoServer):
                         pars = ["CTExpChannel", name, axis, aliasName]
                         if deviceName.count('/') == 2:
                             pars.append(deviceName)
-                        pars = map(str.strip, pars)
+                        pars = list(map(str.strip, pars))
                         pool_dp.command_inout("CreateElement", pars)
 
                         self.handle_attributes(aliasName, e)
@@ -950,13 +950,13 @@ class DevicePoolServer(TangoServer):
                         pars = ["ZeroDExpChannel", name, axis, aliasName]
                         if deviceName.count('/') == 2:
                             pars.append(deviceName)
-                        pars = map(str.strip, pars)
+                        pars = list(map(str.strip, pars))
                         try:
                             pool_dp.command_inout("CreateElement", pars)
 
                             self.handle_attributes(aliasName, e)
 
-                        except PyTango.DevFailed, df:
+                        except PyTango.DevFailed as df:
                             self.on("Exception creating %s: %s" %
                                     (aliasName, str(df)))
                         # to flush any output generated by the pool
@@ -990,7 +990,7 @@ class DevicePoolServer(TangoServer):
                         pars = ["OneDExpChannel", name, axis, aliasName]
                         if deviceName.count('/') == 2:
                             pars.append(deviceName)
-                        pars = map(str.strip, pars)
+                        pars = list(map(str.strip, pars))
                         pool_dp.command_inout("CreateElement", pars)
 
                         self.handle_attributes(aliasName, e)
@@ -1026,7 +1026,7 @@ class DevicePoolServer(TangoServer):
                         pars = ["TwoDExpChannel", name, axis, aliasName]
                         if deviceName.count('/') == 2:
                             pars.append(deviceName)
-                        pars = map(str.strip, pars)
+                        pars = list(map(str.strip, pars))
                         pool_dp.command_inout("CreateElement", pars)
 
                         self.handle_attributes(aliasName, e)
@@ -1063,7 +1063,7 @@ class DevicePoolServer(TangoServer):
                         pars = ["IORegister", name, axis, aliasName]
                         if deviceName.count('/') == 2:
                             pars.append(deviceName)
-                        pars = map(str.strip, pars)
+                        pars = list(map(str.strip, pars))
                         pool_dp.command_inout("CreateElement", pars)
 
                         self.handle_attributes(aliasName, e)
@@ -1124,7 +1124,7 @@ class DevicePoolServer(TangoServer):
                         pars.append(p.text or '\n'.join(
                             [i.text for i in p.findall("Item")]))
 
-                    pars = map(str.strip, pars)
+                    pars = list(map(str.strip, pars))
 
                     pool_dp.command_inout("CreateController", pars)
                     pm_ctrl_count += 1
@@ -1136,7 +1136,7 @@ class DevicePoolServer(TangoServer):
                     self.run(step=True)
                 except:
                     self.on("[FAILED]")
-                    print ctrl_class_info
+                    print(ctrl_class_info)
                     raise
             self.on(" (%d ctrls; %d pmotors) [DONE]" % (
                 pm_ctrl_count, pm_count))
@@ -1182,7 +1182,7 @@ class DevicePoolServer(TangoServer):
                         pars.append(p.text or '\n'.join(
                             [i.text for i in p.findall("Item")]))
 
-                    pars = map(str.strip, pars)
+                    pars = list(map(str.strip, pars))
 
                     pool_dp.command_inout("CreateController", pars)
                     pc_ctrl_count += 1
@@ -1214,7 +1214,7 @@ class DevicePoolServer(TangoServer):
                     pars = [aliasName]
                     for channel in channels:
                         pars.append(channel.get("name"))
-                    pars = map(str.strip, pars)
+                    pars = list(map(str.strip, pars))
                     pool_dp.command_inout("CreateMeasurementGroup", pars)
 
                     self.handle_attributes(aliasName, mg)
@@ -1280,7 +1280,7 @@ class Sardana:
 
     def __init__(self, source, simulation="Best", cleanup=True, log=False):
 
-        if type(source) in types.StringTypes:
+        if type(source) in (str,):
             self._filename = source
             self._xmldoc = None
         else:
@@ -1339,7 +1339,7 @@ class Sardana:
         self.o("Preprocessing input... ")
 
         try:
-            if not self.SimulationModes.has_key(self._simulation):
+            if self._simulation not in self.SimulationModes:
                 return
 
             motSimNb = 0
@@ -1362,17 +1362,17 @@ class Sardana:
             SimuIOLib, SimuIOClass = simType["IORegister"]
 
             simuMotorLibs = [mode["Motor"][0]
-                             for mode in self.SimulationModes.values()]
+                             for mode in list(self.SimulationModes.values())]
             simuCoTiLibs = [mode["CounterTimer"][0]
-                            for mode in self.SimulationModes.values()]
+                            for mode in list(self.SimulationModes.values())]
             simu0DLibs = [mode["ZeroDExpChannel"][0]
-                          for mode in self.SimulationModes.values()]
+                          for mode in list(self.SimulationModes.values())]
             simu1DLibs = [mode["OneDExpChannel"][0]
-                          for mode in self.SimulationModes.values()]
+                          for mode in list(self.SimulationModes.values())]
             simu2DLibs = [mode["TwoDExpChannel"][0]
-                          for mode in self.SimulationModes.values()]
+                          for mode in list(self.SimulationModes.values())]
             simuIOLibs = [mode["IORegister"][0]
-                          for mode in self.SimulationModes.values()]
+                          for mode in list(self.SimulationModes.values())]
 
             for poolserver in poolservers:
                 simuMotorList = []
@@ -1424,7 +1424,7 @@ class Sardana:
 
                     # change the pool XML nodes to refer to simulator lib
                     # instead of real lib
-                    map(ctrl.remove, ctrl.findall("Property"))
+                    list(map(ctrl.remove, ctrl.findall("Property")))
                     ctrl.set("lib", SimuMotorLib)
                     ctrl.set("class", SimuMotorClass)
 
@@ -1505,7 +1505,7 @@ class Sardana:
 
                     # change the pool XML nodes to refer to simulator lib
                     # instead of real lib
-                    map(ctrl.remove, ctrl.findall("Property"))
+                    list(map(ctrl.remove, ctrl.findall("Property")))
                     ctrl.set("lib", SimuCoTiLib)
                     ctrl.set("class", SimuCoTiClass)
                     if self._simulation == "Best":
@@ -1554,21 +1554,21 @@ class Sardana:
                             pSimAttributes.set("name", "DynamicAttributes")
                             pSimAttributes.set("type", "DevVarStringArray")
                             simAttrTempl = "zerod%03d=float(100.0+10.0*random())"
-                            for i in xrange(len(zerods)):
+                            for i in range(len(zerods)):
                                 pSimAttributeItem = etree.SubElement(
                                     pSimAttributes, "Item")
                                 pSimAttributeItem.text = simAttrTempl % (i + 1)
 
                     # change the pool XML nodes to refer to simulator lib
                     # instead of real lib
-                    map(ctrl.remove, ctrl.findall("Property"))
+                    list(map(ctrl.remove, ctrl.findall("Property")))
                     ctrl.set("lib", Simu0DLib)
                     ctrl.set("class", Simu0DClass)
                     if self._simulation == "Best":
                         attributeNames = etree.SubElement(ctrl, "Property")
                         attributeNames.set("name", "AttributeNames")
                         simAttrTempl = "%s/zerod%%03d" % simu0DCtrlName
-                        for i in xrange(len(zerods)):
+                        for i in range(len(zerods)):
                             attributeNameItem = etree.SubElement(
                                 attributeNames, "Item")
                             attributeNameItem.text = simAttrTempl % (i + 1)
@@ -1611,14 +1611,14 @@ class Sardana:
                             pSimAttributes.set("type", "DevVarStringArray")
 
                             simAttrTempl = "oned%03d=DevVarLongArray([10*sin(0.01*x) for x in xrange(100)])"
-                            for i in xrange(len(oneds)):
+                            for i in range(len(oneds)):
                                 pSimAttributeItem = etree.SubElement(
                                     pSimAttributes, "Item")
                                 pSimAttributeItem.text = simAttrTempl % (i + 1)
 
                     # change the pool XML nodes to refer to simulator lib
                     # instead of real lib
-                    map(ctrl.remove, ctrl.findall("Property"))
+                    list(map(ctrl.remove, ctrl.findall("Property")))
                     ctrl.set("lib", Simu1DLib)
                     ctrl.set("class", Simu1DClass)
                     if self._simulation == "Best":
@@ -1627,7 +1627,7 @@ class Sardana:
                         attributeNamesV = etree.SubElement(
                             attributeNames, "Item")
                         simAttrTempl = "%s/oned%%03d" % simu1DCtrlName
-                        for i in xrange(len(oneds)):
+                        for i in range(len(oneds)):
                             attributeNameItem = etree.SubElement(
                                 attributeNames, "Item")
                             attributeNameItem.text = simAttrTempl % (i + 1)
@@ -1670,7 +1670,7 @@ class Sardana:
                             pSimAttributes.set("type", "DevVarStringArray")
 
                             simAttrTempl = "ior%03d=int(READ and VAR('ior%03d') or WRITE and VAR('ior%03d',VALUE))"
-                            for i in xrange(len(iors)):
+                            for i in range(len(iors)):
                                 pSimAttributeItem = etree.SubElement(
                                     pSimAttributes, "Item")
                                 pSimAttributeItem.text = simAttrTempl % (
@@ -1678,14 +1678,14 @@ class Sardana:
 
                     # change the pool XML nodes to refer to simulator lib
                     # instead of real lib
-                    map(ctrl.remove, ctrl.findall("Property"))
+                    list(map(ctrl.remove, ctrl.findall("Property")))
                     ctrl.set("lib", SimuIOLib)
                     ctrl.set("class", SimuIOClass)
                     if self._simulation == "Best":
                         attributeNames = etree.SubElement(ctrl, "Property")
                         attributeNames.set("name", "AttributeNames")
                         simAttrTempl = "%s/ior%%03d" % simuIOCtrlName
-                        for i in xrange(len(iors)):
+                        for i in range(len(iors)):
                             attributeNameItem = etree.SubElement(
                                 attributeNames, "Item")
                             attributeNameItem.text = simAttrTempl % (i + 1)
@@ -1788,19 +1788,19 @@ class Sardana:
             self._macServs[serv.getInstanceName()] = serv
 
     def _getServsShutdownOrder(self):
-        servs = self._macServs.values()
-        servs += self._devicePools.values()
-        servs += self._signalSims.values()
-        servs += self._coTiSims.values()
-        servs += self._motorSims.values()
+        servs = list(self._macServs.values())
+        servs += list(self._devicePools.values())
+        servs += list(self._signalSims.values())
+        servs += list(self._coTiSims.values())
+        servs += list(self._motorSims.values())
         return servs
 
     def _getServsStartupOrder(self):
-        servs = self._motorSims.values()
-        servs += self._coTiSims.values()
-        servs += self._signalSims.values()
-        servs += self._devicePools.values()
-        servs += self._macServs.values()
+        servs = list(self._motorSims.values())
+        servs += list(self._coTiSims.values())
+        servs += list(self._signalSims.values())
+        servs += list(self._devicePools.values())
+        servs += list(self._macServs.values())
         return servs
 
     def cleanUp(self):
@@ -1847,15 +1847,15 @@ if __name__ == "__main__":
     try:
         opts, pargs = getopt.getopt(
             sys.argv[1:], 'vl', ['simulation=', 'cleanup='])
-    except Exception, e:
-        print "ERROR:", str(e)
-        print
-        print __doc__
+    except Exception as e:
+        print("ERROR:", str(e))
+        print()
+        print(__doc__)
         sys.exit(3)
 
     if not len(pargs):
-        print "ERROR: Please provide XML filename"
-        print
+        print("ERROR: Please provide XML filename")
+        print()
         sys.exit(3)
 
     filename = pargs[0]
@@ -1875,32 +1875,32 @@ if __name__ == "__main__":
         elif opt == '-v':
             just_output_and_exit = True
         else:
-            print __doc__
+            print(__doc__)
             sys.exit(3)
 
     try:
         import to_sar
         sar_doc = to_sar.transform(filename)
-    except Exception, e:
-        print 'Sorry, but some problems found when trying to convert to SARDANA xml:'
-        print str(e)
+    except Exception as e:
+        print('Sorry, but some problems found when trying to convert to SARDANA xml:')
+        print(str(e))
 
     sardana = Sardana(sar_doc, simulation=simulation,
                       log=activate_logging, cleanup=cleanup)
 
     if just_output_and_exit:
         sardana.prepare()
-        print etree.tostring(sardana.getRoot(), pretty_print=True)
+        print(etree.tostring(sardana.getRoot(), pretty_print=True))
         sys.exit(0)
 
     try:
         sardana.setUp()
-        print "Ready!"
+        print("Ready!")
         sardana.run()
-    except KeyboardInterrupt, e:
-        print "User pressed Ctrl+C..."
-    except Exception, e:
+    except KeyboardInterrupt as e:
+        print("User pressed Ctrl+C...")
+    except Exception as e:
         traceback.print_exc()
 
-    print "Shutting down!"
+    print("Shutting down!")
     sardana.tearDown()

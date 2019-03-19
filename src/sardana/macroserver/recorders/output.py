@@ -39,6 +39,8 @@ from taurus.core.util.containers import CaselessList
 
 from sardana.macroserver.scan.recorder.datarecorder import DataRecorder
 from sardana.macroserver.scan.recorder.storage import BaseFileRecorder
+import collections
+import numbers
 
 
 class JsonRecorder(DataRecorder):
@@ -134,10 +136,10 @@ class OutputRecorder(DataRecorder):
         self._number_fmt = number_fmt
         self._col_sep = col_sep
         self._col_width = col_width
-        if operator.isSequenceType(cols) and \
-                not isinstance(cols, (str, unicode)):
+        if isinstance(cols, collections.Sequence) and \
+                not isinstance(cols, str):
             cols = CaselessList(cols)
-        elif operator.isNumberType(cols):
+        elif isinstance(cols, numbers.Number):
             cols = cols
         else:
             cols = None
@@ -157,7 +159,7 @@ class OutputRecorder(DataRecorder):
 
         for fr in [r for r in dh.recorders if isinstance(r, BaseFileRecorder)]:
             if not hasattr(self._stream, "getAllEnv") or \
-               "ScanRecorder" in self._stream.getAllEnv().keys():
+               "ScanRecorder" in list(self._stream.getAllEnv().keys()):
                 message = "%s from %s" % (
                     fr.getFormat(), fr.__class__.__name__)
             else:
@@ -177,9 +179,9 @@ class OutputRecorder(DataRecorder):
             if not getattr(column, 'output', True):
                 continue
             name = column.name
-            if operator.isSequenceType(cols) and name not in cols:
+            if isinstance(cols, collections.Sequence) and name not in cols:
                 continue
-            if operator.isNumberType(cols) and col >= cols:
+            if isinstance(cols, numbers.Number) and col >= cols:
                 break
             col_names.append(name)
             label = column.label.strip()
@@ -189,7 +191,7 @@ class OutputRecorder(DataRecorder):
                 label = [label]
             header_rows = max(header_rows, len(label))
             labels.append(label)
-            col_size = max(col_width, max(map(len, label)))
+            col_size = max(col_width, max(list(map(len, label))))
             header_len += col_size
             col_sizes.append(col_size)
 
@@ -255,7 +257,7 @@ class OutputRecorder(DataRecorder):
                 cell = str(cell_data.shape)
             elif cell_data is None:
                 cell = "<nodata>"
-            elif isinstance(cell_data, (str, unicode)):
+            elif isinstance(cell_data, str):
                 cell = "<string>"
             else:
                 cell %= record.data

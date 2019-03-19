@@ -72,7 +72,7 @@ class TestMeasurementGroup(SarTestTestCase, TestCase):
         try:
             mg = Device(mg_name)
             _, values = mg.count(1)
-            for channel, value in values.iteritems():
+            for channel, value in values.items():
                 msg = "Value for %s is not numerical" % channel
                 self.assertTrue(is_numerical(value), msg)
         finally:

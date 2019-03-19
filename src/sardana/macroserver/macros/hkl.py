@@ -136,7 +136,7 @@ class _diffrac:
 
     def check_collinearity(self, h0, k0, l0, h1, k1, l1):
 
-        print h0
+        print(h0)
         cpx = k0 * l1 - l0 * k1
         cpy = l0 * h1 - h0 * l1
         cpz = h0 * k1 - k0 * h1
@@ -1537,7 +1537,7 @@ class loadcrystal(iMacro, _diffrac):
                 self.output("New directory %s not found" % newdir)
                 return
 
-        res = filter(lambda x: x.endswith('.txt'), files)
+        res = [x for x in files if x.endswith('.txt')]
         if len(res) == 0:
             self.output("No crystals available in set directory. Nothing done")
             return

@@ -38,6 +38,7 @@ from taurus.core.util.containers import CaselessDict
 
 from sardana.macroserver.msmanager import MacroServerManager
 from sardana.macroserver.msexception import UnknownEnv
+import collections
 
 
 class EnvironmentManager(MacroServerManager):
@@ -112,7 +113,7 @@ class EnvironmentManager(MacroServerManager):
             try:
                 self.info("Creating environment directory: %s" % dir_name)
                 os.makedirs(dir_name)
-            except OSError, ose:
+            except OSError as ose:
                 self.error("Creating environment: %s" % ose.strerror)
                 self.debug("Details:", exc_info=1)
                 raise ose
@@ -136,7 +137,7 @@ class EnvironmentManager(MacroServerManager):
     def _fillEnvironmentCaches(self, env):
         # fill the three environment caches
         env_dict = self._global_env
-        for k, v in env.items():
+        for k, v in list(env.items()):
             k_parts = k.split('.', 1)
             key = k_parts[0]
 
@@ -315,7 +316,7 @@ class EnvironmentManager(MacroServerManager):
         m_env = self._macro_env.get(macro_name, {})
 
         # put the doors global environment
-        for k, v in d_env.iteritems():
+        for k, v in d_env.items():
             if k.count('.') == 0:
                 ret[k] = v
 
@@ -323,7 +324,7 @@ class EnvironmentManager(MacroServerManager):
         ret.update(m_env)
 
         # put the door and macro specific environment
-        for k, v in d_env.iteritems():
+        for k, v in d_env.items():
             if k.count('.') > 0:
                 m_name, key = k.split('.', 1)
                 if m_name is macro_name:
@@ -346,7 +347,7 @@ class EnvironmentManager(MacroServerManager):
         if keys is None:
             return self.getAllDoorMacroEnv(door_name, macro_name)
 
-        if isinstance(keys, (str, unicode)):
+        if isinstance(keys, str):
             keys = (keys,)
 
         door_name = door_name.lower()
@@ -373,7 +374,7 @@ class EnvironmentManager(MacroServerManager):
         return ret
 
     def _pairwise(self, iterable):
-        itnext = iter(iterable).next
+        itnext = iter(iterable).__next__
         while True:
             yield itnext(), itnext()
 
@@ -382,8 +383,8 @@ class EnvironmentManager(MacroServerManager):
 
     def _encode(self, d):
         ret = {}
-        for k, v in d.iteritems():
-            if isinstance(v, (str, unicode)):
+        for k, v in d.items():
+            if isinstance(v, str):
                 try:
                     v = eval(v)
                 except:
@@ -453,14 +454,14 @@ class EnvironmentManager(MacroServerManager):
 
         @return a dict representing the added environment"""
 
-        if operator.isSequenceType(obj) and \
-           not isinstance(obj, (str, unicode)):
+        if isinstance(obj, collections.Sequence) and \
+           not isinstance(obj, str):
             obj = self._dictFromSequence(obj)
-        elif not operator.isMappingType(obj):
+        elif not isinstance(obj, collections.Mapping):
             raise TypeError("obj parameter must be a sequence or a map")
 
         obj = self._encode(obj)
-        for k, v in obj.iteritems():
+        for k, v in obj.items():
             self._setOneEnv(k, v)
         return obj
 
@@ -480,7 +481,7 @@ class EnvironmentManager(MacroServerManager):
 
         :param key: the key for the environment to be unset
         :return: the sequence of keys which have been removed"""
-        if isinstance(key, (str, unicode)):
+        if isinstance(key, str):
             key = (key,)
         self._unsetEnv(key)
         return key

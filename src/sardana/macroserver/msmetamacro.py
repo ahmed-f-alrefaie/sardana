@@ -36,6 +36,7 @@ import operator
 from sardana import InvalidId, ElementType
 from sardana.sardanameta import SardanaLibrary, SardanaClass, SardanaFunction
 from sardana.macroserver.msparameter import Type, ParamRepeat
+import collections
 
 MACRO_TEMPLATE = """class @macro_name@(Macro):
     \"\"\"@macro_name@ description.\"\"\"
@@ -161,8 +162,8 @@ class Parameterizable(object):
             if isinstance(t, ParamRepeat):
                 t = t.obj()
 
-            if operator.isSequenceType(t) and not isinstance(t, (str, unicode)):
-                if operator.isMappingType(t[-1]):
+            if isinstance(t, collections.Sequence) and not isinstance(t, str):
+                if isinstance(t[-1], collections.Mapping):
                     ret_p.update(t[-1])
                     t = self._build_parameter(t[:-1])
                 else:
@@ -188,7 +189,7 @@ class Parameterizable(object):
             if repeat:
                 rep = type_class
                 opts = sep = ''
-                for opt, val in rep.items():
+                for opt, val in list(rep.items()):
                     opts += '%s%s=%s' % (sep, opt, val)
                     sep = ', '
                 info.append(opts)
@@ -210,7 +211,7 @@ class Parameterizable(object):
             if repeat:
                 rep = type_class
                 opts = sep = ''
-                for opt, val in rep.items():
+                for opt, val in list(rep.items()):
                     opts += '%s%s=%s' % (sep, opt, val)
                     sep = ', '
                 info.append(opts)

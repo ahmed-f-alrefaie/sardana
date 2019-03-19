@@ -89,8 +89,8 @@ class TangoAttributeListener(AttributeListener):
                 pad = [None] * (idx[0] - expected_idx)
                 channel_data.extend(pad + value)
                 self.data[obj_fullname] = channel_data
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
             raise Exception('"data" event callback failed')
 
 
@@ -168,14 +168,14 @@ class MeasSarTestTestCase(SarTestTestCase):
         return chn_names
 
     def tearDown(self):
-        for channel, event_id in self.event_ids.items():
+        for channel, event_id in list(self.event_ids.items()):
             channel.unsubscribe_event(event_id)
         try:
             # Delete the meas
             self.pool.DeleteElement(self.mg_name)
-        except Exception, e:
-            print('Impossible to delete MeasurementGroup: %s' % (self.mg_name))
-            print e
+        except Exception as e:
+            print(('Impossible to delete MeasurementGroup: %s' % (self.mg_name)))
+            print(e)
         SarTestTestCase.tearDown(self)
 
 synchronization1 = [{SynchParam.Delay: {SynchDomain.Time: 0},
@@ -247,10 +247,10 @@ class TangoAcquisitionTestCase(MeasSarTestTestCase, unittest.TestCase):
         # printing acquisition records
         table = self.attr_listener.get_table()
         header = table.dtype.names
-        print header
+        print(header)
         n_rows = table.shape[0]
-        for row in xrange(n_rows):
-            print row, table[row]
+        for row in range(n_rows):
+            print(row, table[row])
         # checking if any of data was acquired
         self.assertTrue(self.attr_listener.data, 'no data were acquired')
         # checking if all channels produced data
@@ -274,7 +274,7 @@ class TangoAcquisitionTestCase(MeasSarTestTestCase, unittest.TestCase):
         # Do acquisition
         self.meas.Start()
         while self.meas.State() == PyTango.DevState.MOVING:
-            print "Acquiring..."
+            print("Acquiring...")
             time.sleep(0.1)
         repetitions = params['synchronization'][0][SynchParam.Repeats]
         self._acq_asserts(chn_names, repetitions)
@@ -290,7 +290,7 @@ class TangoAcquisitionTestCase(MeasSarTestTestCase, unittest.TestCase):
         # starting timer (0.2 s) which will stop the measurement group
         threading.Timer(0.2, self.stopMeas).start()
         while self.meas.State() == PyTango.DevState.MOVING:
-            print "Acquiring..."
+            print("Acquiring...")
             time.sleep(0.1)
         state = self.meas.State()
         desired_state = PyTango.DevState.ON

@@ -25,7 +25,7 @@
 
 """This module contains the most generic sardana constants and enumerations"""
 
-from __future__ import absolute_import
+
 
 __all__ = ["EpsilonError", "SardanaServer", "ServerRunMode", "State",
            "DataType", "DataFormat", "DataAccess", "DTYPE_MAP", "R_DTYPE_MAP",
@@ -44,6 +44,7 @@ __docformat__ = 'restructuredtext'
 import math
 
 from taurus.core.util.enumeration import Enumeration
+import collections
 
 #: maximum difference between two floats so that they are considered equal
 EpsilonError = 1E-16
@@ -124,7 +125,7 @@ DTYPE_MAP = {
     'int': DataType.Integer,
     'integer': DataType.Integer,
     int: DataType.Integer,
-    long: DataType.Integer,
+    int: DataType.Integer,
     'long': DataType.Integer,
     DataType.Integer: DataType.Integer,
     'float': DataType.Double,
@@ -146,7 +147,7 @@ R_DTYPE_MAP = {
     'int': int,
     'integer': int,
     int: int,
-    long: int,
+    int: int,
     'long': int,
     DataType.Integer: int,
     'float': float,
@@ -193,7 +194,7 @@ def from_dtype_str(dtype):
     dformat = DataFormat.Scalar
     if dtype is None:
         dtype = 'float'
-    elif isinstance(dtype, (str, unicode)):
+    elif isinstance(dtype, str):
         dtype = dtype.lower()
         if dtype.startswith("pytango."):
             dtype = dtype[len("pytango."):]
@@ -215,7 +216,7 @@ def from_access_str(access):
     :type dtype: :obj:`str`
     :return: a simple string for the given access
     :rtype: :obj:`str`"""
-    if isinstance(access, (str, unicode)):
+    if isinstance(access, str):
         access = access.lower()
         if access.startswith("pytango."):
             access = access[len("pytango."):]
@@ -234,16 +235,16 @@ def to_dtype_dformat(data):
     """
     import operator
     dtype, dformat = data, DataFormat.Scalar
-    if isinstance(data, (str, unicode)):
+    if isinstance(data, str):
         dtype, dformat = from_dtype_str(data)
-    elif operator.isSequenceType(data):
+    elif isinstance(data, collections.Sequence):
         dformat = DataFormat.OneD
         dtype = data[0]
         if isinstance(dtype, str):
             dtype, dformat2 = from_dtype_str(dtype)
             if dformat2 == DataFormat.OneD:
                 dformat = DataFormat.TwoD
-        elif operator.isSequenceType(dtype):
+        elif isinstance(dtype, collections.Sequence):
             dformat = DataFormat.TwoD
             dtype = dtype[0]
             if isinstance(dtype, str):
@@ -262,7 +263,7 @@ def to_daccess(daccess):
     :rtype: :obj:`DataAccess`"""
     if daccess is None:
         daccess = DataAccess.ReadWrite
-    elif isinstance(daccess, (str, unicode)):
+    elif isinstance(daccess, str):
         daccess = DACCESS_MAP.get(
             from_access_str(daccess), DataAccess.ReadWrite)
     return daccess
@@ -450,7 +451,7 @@ INTERFACES_EXPANDED = {}
 
 def __expand(name):
     direct_expansion, _ = INTERFACES[name]
-    if isinstance(direct_expansion, (str, unicode)):
+    if isinstance(direct_expansion, str):
         direct_expansion = direct_expansion,
     exp = set(direct_expansion)
     for e in direct_expansion:
@@ -482,7 +483,7 @@ def __expand_sardana_interface_data(si_map, name, curr_id):
             curr_id = __expand_sardana_interface_data(
                 si_map, interface, curr_id)
         d |= si_map[interface]
-    si_map[name] = long(d | curr_id)
+    si_map[name] = int(d | curr_id)
     return 2 * curr_id
 
 
@@ -495,7 +496,7 @@ def __root_expand_sardana_interface_data():
 
 #: An enumeration describing the all possible sardana interfaces
 Interface = Enumeration("Interface",
-                        __root_expand_sardana_interface_data().items())
+                        list(__root_expand_sardana_interface_data().items()))
 
 
 def __create_sardana_interfaces():

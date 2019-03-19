@@ -45,6 +45,7 @@ from sardana import State, SardanaServer, ElementType, Interface, \
 from sardana.pool.pool import Pool as POOL
 from sardana.pool.poolmetacontroller import TYPE_MAP_OBJ
 from sardana.tango.core.util import get_tango_version_number
+import collections
 
 
 class Pool(PyTango.Device_4Impl, Logger):
@@ -339,7 +340,7 @@ class Pool(PyTango.Device_4Impl, Logger):
                             "interface" % (class_name, type_str))
 
         # check that necessary property values are set
-        for prop_name, prop_info in ctrl_class.ctrl_properties.items():
+        for prop_name, prop_info in list(ctrl_class.ctrl_properties.items()):
             prop_value = properties.get(prop_name)
             if prop_value is None:
                 if prop_info.default_value is None:
@@ -383,7 +384,7 @@ class Pool(PyTango.Device_4Impl, Logger):
                 info = dict(id=pm_id, name=pm_name, ctrl_name=name, axis=i + 1,
                             type='PseudoMotor', elements=motor_ids)
                 if pm_name.count(',') > 0:
-                    n, fn = map(str.strip, pm_name.split(',', 1))
+                    n, fn = list(map(str.strip, pm_name.split(',', 1)))
                     info['name'], info['full_name'] = n, fn
                 pseudo_motor_infos[klass_pseudo_role] = info
                 pseudo_motor_ids.append(pm_id)
@@ -423,7 +424,7 @@ class Pool(PyTango.Device_4Impl, Logger):
                 info = dict(id=pc_id, name=pc_name, ctrl_name=name, axis=i + 1,
                             type='PseudoCounter', elements=counter_ids)
                 if pc_name.count(',') > 0:
-                    n, fn = map(str.strip, pc_name.split(',', 1))
+                    n, fn = list(map(str.strip, pc_name.split(',', 1)))
                     info['name'], info['full_name'] = n, fn
                 pseudo_counter_infos[klass_pseudo_role] = info
                 pseudo_counter_ids.append(pc_id)
@@ -450,7 +451,7 @@ class Pool(PyTango.Device_4Impl, Logger):
         # Determine which controller writtable attributes have default value
         # and apply them to the newly created controller
         attrs = []
-        for attr_name, attr_info in ctrl_class.ctrl_attributes.items():
+        for attr_name, attr_info in list(ctrl_class.ctrl_attributes.items()):
             default_value = attr_info.default_value
             if default_value is None:
                 continue
@@ -466,10 +467,10 @@ class Pool(PyTango.Device_4Impl, Logger):
         # for pseudo motor/counter controller also create pseudo
         # motor(s)/counter(s) automatically
         if elem_type == ElementType.PseudoMotor:
-            for pseudo_motor_info in pseudo_motor_infos.values():
+            for pseudo_motor_info in list(pseudo_motor_infos.values()):
                 self._create_single_element(pseudo_motor_info)
         elif elem_type == ElementType.PseudoCounter:
-            for pseudo_counter_info in pseudo_counter_infos.values():
+            for pseudo_counter_info in list(pseudo_counter_infos.values()):
                 self._create_single_element(pseudo_counter_info)
 
     #@DebugIt()
@@ -621,7 +622,7 @@ class Pool(PyTango.Device_4Impl, Logger):
         # them to the newly created element
         ctrl_class_info = ctrl.get_ctrl_info()
         attrs = []
-        for attr_name, attr_info in ctrl_class_info.getAxisAttributes().items():
+        for attr_name, attr_info in list(ctrl_class_info.getAxisAttributes().items()):
             default_value = attr_info.default_value
             if default_value is None:
                 continue
@@ -786,11 +787,11 @@ class Pool(PyTango.Device_4Impl, Logger):
 
     def _format_create_json_arguments(self, argin):
         elems, ret = json.loads(argin[0]), []
-        if operator.isMappingType(elems):
+        if isinstance(elems, collections.Mapping):
             elems = [elems]
         for elem in elems:
             d = {}
-            for k, v in elem.items():
+            for k, v in list(elem.items()):
                 d[str(k)] = str(v)
             ret.append(d)
         return ret
@@ -814,15 +815,15 @@ class Pool(PyTango.Device_4Impl, Logger):
             raise Exception(msg)
         if len(argin) == 1:
             ret = self._format_create_json_arguments(argin)
-            if not ret.has_key('type'):
+            if 'type' not in ret:
                 raise KeyError("Missing key 'type'")
-            if not ret.has_key('library'):
+            if 'library' not in ret:
                 raise KeyError("Missing key 'library'")
-            if not ret.has_key('klass'):
+            if 'klass' not in ret:
                 raise KeyError("Missing key 'klass'")
-            if not ret.has_key('name'):
+            if 'name' not in ret:
                 raise KeyError("Missing key 'name'")
-            if not ret.has_key('properties'):
+            if 'properties' not in ret:
                 ret['properties'] = CaselessDict()
             return ret
 
@@ -861,11 +862,11 @@ class Pool(PyTango.Device_4Impl, Logger):
                 elems = json.loads(argin[0])
             except:
                 elems = argin
-            if operator.isMappingType(elems):
+            if isinstance(elems, collections.Mapping):
                 elems = [elems]
             for elem in elems:
                 d = {}
-                for k, v in elem.items():
+                for k, v in list(elem.items()):
                     d[str(k)] = str(v)
                 ret.append(d)
             return ret
@@ -886,11 +887,11 @@ class Pool(PyTango.Device_4Impl, Logger):
                 elems = json.loads(argin[0])
             except:
                 elems = argin
-            if operator.isMappingType(elems):
+            if isinstance(elems, collections.Mapping):
                 elems = [elems]
             for elem in elems:
                 d = {}
-                for k, v in elem.items():
+                for k, v in list(elem.items()):
                     d[str(k)] = str(v)
                 ret.append(d)
             return ret

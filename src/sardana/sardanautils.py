@@ -26,7 +26,7 @@
 """This module is part of the Python Sardana library. It defines some
 utility methods"""
 
-from __future__ import absolute_import
+
 
 __all__ = ["is_pure_str", "is_non_str_seq", "is_integer", "is_number",
            "is_bool", "check_type", "assert_type", "str_to_value",
@@ -49,19 +49,19 @@ __DTYPE_MAP = dict(DTYPE_MAP)
 
 __use_unicode = False
 try:
-    unicode
+    str
     __use_unicode = True
-    __str_klasses.append(unicode)
-    __DTYPE_MAP[unicode] = DataType.String
+    __str_klasses.append(str)
+    __DTYPE_MAP[str] = DataType.String
 except:
     pass
 
 __use_long = False
 try:
-    long
+    int
     __use_long = True
-    __int_klasses.append(long)
-    __DTYPE_MAP[long] = DataType.Integer
+    __int_klasses.append(int)
+    __DTYPE_MAP[int] = DataType.Integer
 except:
     pass
 

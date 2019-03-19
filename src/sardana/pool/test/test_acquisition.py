@@ -75,10 +75,10 @@ class AcquisitionTestCase(BasePoolTestCase):
         # print acquisition records
         table = self.data_listener.get_table()
         header = table.dtype.names
-        print header
+        print(header)
         n_rows = table.shape[0]
-        for row in xrange(n_rows):
-            print row, table[row]
+        for row in range(n_rows):
+            print(row, table[row])
         # checking if all channels produced data
         for channel in self.channel_names:
             msg = 'data from channel %s were not acquired' % channel

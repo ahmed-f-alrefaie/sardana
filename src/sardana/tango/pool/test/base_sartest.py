@@ -85,8 +85,8 @@ class SarTestTestCase(BasePoolTestCase):
                 ctrl_name = prefix + "_ctrl_%s" % (postfix)
                 try:
                     self.pool.CreateController([sar_type, lib, cls, ctrl_name])
-                except Exception, e:
-                    print e
+                except Exception as e:
+                    print(e)
                     msg = 'Impossible to create ctrl: "%s"' % (ctrl_name)
                     raise Exception('Aborting SartestTestCase: %s' % (msg))
                 self.ctrl_list.append(ctrl_name)
@@ -96,8 +96,8 @@ class SarTestTestCase(BasePoolTestCase):
                     try:
                         self.pool.createElement(
                             [sar_type, ctrl_name, str(axis), elem_name])
-                    except Exception, e:
-                        print e
+                    except Exception as e:
+                        print(e)
                         msg = 'Impossible to create element: "%s"' % (
                             elem_name)
                         raise Exception('Aborting SartestTestCase: %s' % (msg))
@@ -112,8 +112,8 @@ class SarTestTestCase(BasePoolTestCase):
                 argin.extend(roles)
                 try:
                     self.pool.CreateController(argin)
-                except Exception, e:
-                    print e
+                except Exception as e:
+                    print(e)
                     msg = 'Impossible to create ctrl: "%s"' % (ctrl_name)
                     raise Exception('Aborting SartestTestCase: %s' % (msg))
                 self.ctrl_list.append(ctrl_name)
@@ -121,10 +121,10 @@ class SarTestTestCase(BasePoolTestCase):
                     elem = role.split("=")[1]
                     if elem not in self.elem_list:
                         self.elem_list.append(elem)
-        except Exception, e:
+        except Exception as e:
             # force tearDown in order to eliminate the Pool
             BasePoolTestCase.tearDown(self)
-            print e
+            print(e)
 
     def tearDown(self):
         """Remove the elements and the controllers
