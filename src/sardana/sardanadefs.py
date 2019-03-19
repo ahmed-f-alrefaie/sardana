@@ -42,7 +42,6 @@ __all__ = ["EpsilonError", "SardanaServer", "ServerRunMode", "State",
 __docformat__ = 'restructuredtext'
 
 import math
-
 from taurus.core.util.enumeration import Enumeration
 import collections
 

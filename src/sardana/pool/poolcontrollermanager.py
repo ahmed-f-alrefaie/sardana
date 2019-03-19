@@ -485,14 +485,16 @@ class ControllerManager(Singleton, Logger):
         return sorted(self._modules.keys())
 
     def getControllerLibs(self, filter=None):
+        from operator import itemgetter, attrgetter
         ret, expr = [], None
         if filter is not None:
             expr = re.compile(filter, re.IGNORECASE)
         for name, lib in self._modules.items():
+            #print(name,lib)
             if lib.has_errors() or (expr is not None and expr.match(name) is None):
                 continue
             ret.append(lib)
-        ret.sort()
+        ret.sort(key=attrgetter('full_name'))
         return ret
 
     def getControllers(self, filter=None):

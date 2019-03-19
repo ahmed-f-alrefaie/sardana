@@ -132,7 +132,9 @@ class SardanaLibrary(SardanaBaseObject):
         SardanaBaseObject.__init__(self, **kwargs)
 
     def __cmp__(self, o):
-        return cmp(self.full_name, o.full_name)
+        a = self.full_name
+        b = o.full_name
+        return (a>b)-(a<b)#cmp(self.full_name, o.full_name)
 
     def __str__(self):
         return self.name

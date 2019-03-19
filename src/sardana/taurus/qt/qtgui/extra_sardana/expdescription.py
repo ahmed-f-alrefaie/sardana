@@ -86,8 +86,13 @@ class SardanaAcquirableProxyModel(SardanaBaseProxyModel):
     #                     'TwoDExpChannel', 'ComChannel', 'IORegister', 'PseudoMotor',
     #                     'PseudoCounter']
 
-    from sardana.sardanadefs import ElementType, TYPE_ACQUIRABLE_ELEMENTS
-    ALLOWED_TYPES = [ElementType[t] for t in TYPE_ACQUIRABLE_ELEMENTS]
+    from sardana.sardanadefs import ElementType
+    from sardana.sardanadefs import TYPE_ACQUIRABLE_ELEMENTS
+
+    ALLOWED_TYPES = []
+
+    for t in TYPE_ACQUIRABLE_ELEMENTS:
+        ALLOWED_TYPES.append(ElementType[t])
 
     def filterAcceptsRow(self, sourceRow, sourceParent):
         sourceModel = self.sourceModel()
